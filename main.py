@@ -11,12 +11,7 @@ def create_image():
 	cv2.rectangle(img, (food[0], food[1]), (food[0] + 10, food[1] + 10), (0, 255, 255), -1) # Yellow food
 	for part in snake.body_parts:
 
-		### Player in itself
-		if part.name != 'head':
-			if ((((snake.body_parts[0].pos1[0] < part.pos1[0] < snake.body_parts[0].pos2[0]) or (snake.body_parts[0].pos1[0] < part.pos2[0] < snake.body_parts[0].pos2[0])) and ((snake.body_parts[0].pos2[1] > part.pos1[1]) or (snake.body_parts[0].pos1[1] < part.pos2[1]))) or \
-			   (((snake.body_parts[0].pos1[1] < part.pos1[1] < snake.body_parts[0].pos2[1]) or (snake.body_parts[0].pos1[1] < part.pos2[1] < snake.body_parts[0].pos2[1])) and ((snake.body_parts[0].pos1[0] > part.pos1[0]) or (snake.body_parts[0].pos1[0] < part.pos2[0])))):
-			   return 1
-
+		### Move body to next frame
 		part.pos1[0] += part.vel[0]
 		part.pos1[1] += part.vel[1]
 		part.pos2[0] += part.vel[0]
@@ -29,6 +24,12 @@ def create_image():
 		if (part.pos1[0] > screenx) or (part.pos2[0] > screenx) or (part.pos1[0] < 0) or (part.pos2[0] < 0) or \
 		   (part.pos1[1] > screeny) or (part.pos2[1] > screeny) or (part.pos1[1] < 30) or (part.pos2[1] < 30):
 			return 1
+
+		### Player in itself ### Solve this
+		if part.name != 'head':
+			if ((((snake.body_parts[0].pos1[0] < part.pos1[0] < snake.body_parts[0].pos2[0]) or (snake.body_parts[0].pos1[0] < part.pos2[0] < snake.body_parts[0].pos2[0])) and ((snake.body_parts[0].pos2[1] > part.pos1[1]) or (snake.body_parts[0].pos1[1] < part.pos2[1]))) or \
+			   (((snake.body_parts[0].pos1[1] < part.pos1[1] < snake.body_parts[0].pos2[1]) or (snake.body_parts[0].pos1[1] < part.pos2[1] < snake.body_parts[0].pos2[1])) and ((snake.body_parts[0].pos1[0] > part.pos1[0]) or (snake.body_parts[0].pos1[0] < part.pos2[0])))):
+			   return 1
 
 	cv2.rectangle(img, (0, 0), (screenx, 30), (255, 255, 255), -1)
 	cv2.putText(img=img, text=f"Score: {score}", fontFace=cv2.FONT_HERSHEY_SIMPLEX, org=(25, 25), fontScale=1, color=(0, 0, 0), lineType=1, thickness=2)
@@ -65,6 +66,7 @@ class Snake(object):
 											 pos2=[self.body_parts[-1].pos2[0] + x, self.body_parts[-1].pos2[1]], 
 											 vel=self.body_parts[-1].vel))
 
+	### Update direction if the head is not going the opposite direction
 	def go_right(self):
 		if self.body_parts[0].vel != (-15, 0):
 			self.body_parts[0].vel = (15, 0)
