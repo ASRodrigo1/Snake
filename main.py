@@ -119,7 +119,7 @@ if __name__ == '__main__':
 		if key == 119: ### W
 			snake.go_up()
 
-		if key == 97: ### A
+		if key == 97:  ### A
 			snake.go_left()
 
 		if key == 115: ### S
@@ -128,7 +128,7 @@ if __name__ == '__main__':
 		if key == 100: ### D
 			snake.go_right()
 
-		### Finish this
+		### Player eats the food
 		if ((snake.body_parts[0].pos1[0] <= food[0] <= snake.body_parts[0].pos2[0]) or (snake.body_parts[0].pos1[0] <= food[0] + x <= snake.body_parts[0].pos2[0])) and \
 		    ((snake.body_parts[0].pos1[1] <= food[1] <= snake.body_parts[0].pos2[1]) or (snake.body_parts[0].pos1[1] <= food[1] + y <= snake.body_parts[0].pos2[1])):
 			food = create_food()
