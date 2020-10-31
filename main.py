@@ -3,16 +3,19 @@ import numpy as np
 import random
 
 x, y, vel = 15, 15, (15, 0)
-startx, starty = 0, 0
-screenx, screeny = 512, 512
+startx, starty = 100, 100
+screenx, screeny = 600, 600
 
 def create_image():
 
 	cv2.rectangle(img, (food[0], food[1]), (food[0] + 10, food[1] + 10), (0, 255, 255), -1) # Yellow food
-	count = 0
 	for part in snake.body_parts:
 
-		count += 1
+		### Player in itself
+		if part.name != 'head':
+			if ((((snake.body_parts[0].pos1[0] < part.pos1[0] < snake.body_parts[0].pos2[0]) or (snake.body_parts[0].pos1[0] < part.pos2[0] < snake.body_parts[0].pos2[0])) and ((snake.body_parts[0].pos2[1] > part.pos1[1]) or (snake.body_parts[0].pos1[1] < part.pos2[1]))) or \
+			   (((snake.body_parts[0].pos1[1] < part.pos1[1] < snake.body_parts[0].pos2[1]) or (snake.body_parts[0].pos1[1] < part.pos2[1] < snake.body_parts[0].pos2[1])) and ((snake.body_parts[0].pos1[0] > part.pos1[0]) or (snake.body_parts[0].pos1[0] < part.pos2[0])))):
+			   return 1
 
 		part.pos1[0] += part.vel[0]
 		part.pos1[1] += part.vel[1]
@@ -24,34 +27,16 @@ def create_image():
 
 		### Player outside window
 		if (part.pos1[0] > screenx) or (part.pos2[0] > screenx) or (part.pos1[0] < 0) or (part.pos2[0] < 0) or \
-		   (part.pos1[1] > screeny) or (part.pos2[1] > screeny) or (part.pos1[1] < 0) or (part.pos2[1] < 0):
+		   (part.pos1[1] > screeny) or (part.pos2[1] > screeny) or (part.pos1[1] < 30) or (part.pos2[1] < 30):
 			return 1
 
-		### Player in itself
-		#if part.name != 'head':
-		#	if (((snake.body_parts[0].pos1[0] <= part.pos1[0] <= snake.body_parts[0].pos2[0]) or (snake.body_parts[0].pos1[0] <= part.pos2[0] <= snake.body_parts[0].pos2[0])) and \
-		#		((snake.body_parts[0].pos1[1] >= part.pos1[1]) or (snake.body_parts[0].pos1[1] <= part.pos2[1])) or \
-		#	   (((snake.body_parts[0].pos1[1] <= part.pos1[1] <= snake.body_parts[0].pos2[1]) or (snake.body_parts[0].pos1[1] <= part.pos2[1] <= snake.body_parts[0].pos2[1])) and \
-		#	    ((snake.body_parts[0].pos1[0] >= part.pos1[0]) or (snake.body_parts[0].pos1[0] <= part.pos2[0])))):
-		#		if count < 2:
-		#			continue
-		#		return 1
-
+	cv2.rectangle(img, (0, 0), (screenx, 30), (255, 255, 255), -1)
+	cv2.putText(img=img, text=f"Score: {score}", fontFace=cv2.FONT_HERSHEY_SIMPLEX, org=(25, 25), fontScale=1, color=(0, 0, 0), lineType=1, thickness=2)
 	cv2.imshow('Snake', img)
 
 def create_food():
-	x1, y1 = random.randint(0, 497), random.randint(0, 497)
-	while not (x1%15):
-		if x1 + 14 < screenx - 15:
-			x1 += 1
-		else:
-			x1 -= 1
-	while not (y1%15):
-		if y1 + 14 < screeny - 15:
-			y1 -= 1
-		else:
-			y1 += 1
-	return (x1, y1)
+	x1, y1 = random.randint(0, screenx - x), random.randint(35, screeny - y)
+	return x1, y1
 
 class Snake(object):
 	def __init__(self):
@@ -103,12 +88,13 @@ class Body_Part(object):
 if __name__ == '__main__':
 	snake = Snake()
 	food = create_food()
-	counter = 0
+	score = 0
 
 	while True:
 		img = np.zeros((screenx, screeny, 3), np.uint8)	
-		key = cv2.waitKey(450) & 0xFF
+		key = cv2.waitKey(250) & 0xFF
 
+		### Updates body position
 		if len(snake.body_parts) > 1:
 			for index in range(len(snake.body_parts) - 1, 0, -1):
 				snake.body_parts[index].vel = snake.body_parts[index - 1].vel
@@ -133,7 +119,9 @@ if __name__ == '__main__':
 		    ((snake.body_parts[0].pos1[1] <= food[1] <= snake.body_parts[0].pos2[1]) or (snake.body_parts[0].pos1[1] <= food[1] + y <= snake.body_parts[0].pos2[1])):
 			food = create_food()
 			snake.eat_food()
+			score += 1
 
+		### Create the image
 		response = create_image()
 
 		if response:
