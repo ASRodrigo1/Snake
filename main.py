@@ -2,8 +2,7 @@ import cv2
 import numpy as np
 import random
 
-x, y, vel = 15, 15, (15, 0)
-startx, starty = 100, 100
+x, y, vel = 15, 15, random.choice([(15, 0), (-15, 0), (0, 15), (0, -15)])
 screenx, screeny = 600, 600
 
 def create_image():
@@ -41,7 +40,8 @@ def create_food():
 
 class Snake(object):
 	def __init__(self):
-		head = Body_Part(name='head', pos1=[startx, starty], pos2=[startx + x, starty + y])
+		self.startx, self.starty = random.randint(100, 500), random.randint(100, 500)
+		head = Body_Part(name='head', pos1=[self.startx, self.starty], pos2=[self.startx + x, self.starty + y])
 		self.body_parts = [head]
 	
 	def eat_food(self):
@@ -88,6 +88,7 @@ class Body_Part(object):
 		self.vel = vel
 
 if __name__ == '__main__':
+
 	snake = Snake()
 	food = create_food()
 	score = 0
