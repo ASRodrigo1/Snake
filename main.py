@@ -8,10 +8,9 @@ screenx, screeny = 600, 600
 
 def create_image():
 
-	cv2.rectangle(img, (food[0], food[1]), (food[0] + 10, food[1] + 10), (0, 255, 255), -1) # Yellow food
-	for part in snake.body_parts:
+	for index, part in enumerate(snake.body_parts):
 
-		### Move body to next frame
+		### Move body to the next frame
 		part.pos1[0] += part.vel[0]
 		part.pos1[1] += part.vel[1]
 		part.pos2[0] += part.vel[0]
@@ -25,15 +24,16 @@ def create_image():
 		   (part.pos1[1] > screeny) or (part.pos2[1] > screeny) or (part.pos1[1] < 30) or (part.pos2[1] < 30):
 			return 1
 
-		### Player in itself ### Solve this
-		if part.name != 'head':
-			if ((((snake.body_parts[0].pos1[0] < part.pos1[0] < snake.body_parts[0].pos2[0]) or (snake.body_parts[0].pos1[0] < part.pos2[0] < snake.body_parts[0].pos2[0])) and ((snake.body_parts[0].pos2[1] > part.pos1[1]) or (snake.body_parts[0].pos1[1] < part.pos2[1]))) or \
-			   (((snake.body_parts[0].pos1[1] < part.pos1[1] < snake.body_parts[0].pos2[1]) or (snake.body_parts[0].pos1[1] < part.pos2[1] < snake.body_parts[0].pos2[1])) and ((snake.body_parts[0].pos1[0] > part.pos1[0]) or (snake.body_parts[0].pos1[0] < part.pos2[0])))):
-			   return 1
+		### Player in itself
+		if index > 2:
+			if ((snake.body_parts[0].pos1[0] == part.pos1[0] and part.pos2[0] == snake.body_parts[0].pos2[0])):
+				if ((snake.body_parts[0].pos1[1] == part.pos1[1] and part.pos2[1] ==  snake.body_parts[0].pos2[1])):
+					return 1
 
-	cv2.rectangle(img, (0, 0), (screenx, 30), (255, 255, 255), -1)
-	cv2.putText(img=img, text=f"Score: {score}", fontFace=cv2.FONT_HERSHEY_SIMPLEX, org=(25, 25), fontScale=1, color=(0, 0, 0), lineType=1, thickness=2)
-	cv2.imshow('Snake', img)
+	cv2.rectangle(img, (0, 0), (screenx, 30), (255, 255, 255), -1) ### Blank bar at the top
+	cv2.rectangle(img, (food[0], food[1]), (food[0] + 12, food[1] + 12), (0, 255, 255), -1) ### Yellow food
+	cv2.putText(img=img, text=f"Score: {score}", fontFace=cv2.FONT_HERSHEY_SIMPLEX, org=(25, 25), fontScale=1, color=(0, 0, 0), lineType=1, thickness=2) ### Score
+	cv2.imshow('Snake', img) ### Shows the image
 
 def create_food():
 	x1, y1 = random.randint(0, screenx - x), random.randint(35, screeny - y)
